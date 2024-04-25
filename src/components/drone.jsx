@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { firestore } from './firebase.jsx';
+import { addDoc, collection } from "@firebase/firestore";
 
 const Drone = () => {
+  const ref = collection(firestore, "data");
   const initialRow = {
     lastBatteryChange: '',
     lastMotorChange: '',
@@ -8,26 +11,40 @@ const Drone = () => {
     propellorDamage: '',
   };
 
-  const storedRows = JSON.parse(localStorage.getItem('droneRows'));
-  const [rows, setRows] = useState(storedRows || [initialRow]);
+  // Load data from localStorage or use initialRow if no data exists
+  const [rows, setRows] = useState(() => {
+    const storedData = JSON.parse(localStorage.getItem('droneRows'));
+    return storedData || [initialRow];
+  });
 
-  const handleInputChange = (index, key, value) => {
-    setRows((prevRows) =>
-      prevRows.map((row, i) =>
-        i === index ? { ...row, [key]: value } : row
-      )
-    );
-  };
-
-  const handlePropellorDamageBlur = (index) => {
-    if (index === rows.length - 1) {
-      setRows((prevRows) => [...prevRows, { ...initialRow }]);
+  // Save data to Firestore and update localStorage
+  const handleSave = async (e) => {
+    e.preventDefault();
+    try {
+      await addDoc(ref, { rows });
+      // Update localStorage with the latest rows data
+      localStorage.setItem('droneRows', JSON.stringify(rows));
+    } catch (error) {
+      console.error("Error saving data to Firestore:", error);
     }
   };
 
-  useEffect(() => {
-    localStorage.setItem('droneRows', JSON.stringify(rows));
-  }, [rows]);
+  // Update rows state and immediately update localStorage
+  const handleInputChange = (index, key, value) => {
+    const updatedRows = rows.map((row, i) =>
+      i === index ? { ...row, [key]: value } : row
+    );
+    setRows(updatedRows);
+    localStorage.setItem('droneRows', JSON.stringify(updatedRows));
+  };
+
+  // Add a new row with initial values
+  const handlePropellorDamageBlur = (index) => {
+    if (index === rows.length - 1) {
+      setRows((prevRows) => [...prevRows, { ...initialRow }]);
+      localStorage.setItem('droneRows', JSON.stringify([...rows, initialRow]));
+    }
+  };
 
   return (
     <div>
@@ -85,6 +102,9 @@ const Drone = () => {
           ))}
         </tbody>
       </table>
+      <button onClick={handleSave}
+       className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+       >Save</button>
     </div>
   );
 };
