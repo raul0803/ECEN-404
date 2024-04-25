@@ -6,12 +6,9 @@ import App from './App';
 document.title = "Search and Rescue";
 
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <App/>
-    </BrowserRouter>
-  </React.StrictMode>
-    
+ReactDOM.render(
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>,
+  document.getElementById('root')
 );
