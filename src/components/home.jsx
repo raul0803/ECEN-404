@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
+import { firebase_auth } from './firebase.jsx';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 const customStyles = {
   content: {
@@ -16,6 +18,9 @@ export default function Example() {
   let subtitle;
 
   const [modalIsOpen, setIsOpen] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [signInError, setSignInError] = useState(null);
 
   function openModal() {
     setIsOpen(true);
@@ -25,30 +30,31 @@ export default function Example() {
     subtitle.style.color = '#f00';
   }
 
-  function closeModal() {
+  const closeModal = () => {
     setIsOpen(false);
-  }
+    setSignInError(null);
+  };
 
   useEffect(() => {
-    // Open the modal when the component mounts
-    openModal();
-  }, []); // The empty dependency array ensures that this effect runs only once when the component mounts
+    openModal(); // Open the modal every time the component mounts
+  }, []);
 
-  const handleAcceptTerms = () => {
-    // Add logic here for handling the acceptance of terms if needed
-    // ...
-
-    // Close the modal
-    closeModal();
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+    try {
+      await signInWithEmailAndPassword(firebase_auth, email, password);
+      console.log('User signed in successfully!');
+      closeModal();
+    } catch (error) {
+      console.error('Error signing in:', error.message);
+      setSignInError(error.message);
+    }
   };
 
   return (
     <>
       <div className="min-h-full">
-        <header className="bg-white ">-Camera display
-          -Battery Percentage
-          -Snap Function
-          -Drone on/off
+        <header className="bg-white ">
           <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex ">
             <div
               style={{
@@ -56,7 +62,7 @@ export default function Example() {
                 top: '150px',
               }}
             >
-              <h1 className='text-3xl   tracking-tight text-gray-900'>
+              <h1 className='text-3xl tracking-tight text-gray-900'>
                 Search & Rescue
               </h1>
               <h1 className='text-7xl font-bold tracking-tight text-gray-900'>
@@ -80,6 +86,7 @@ export default function Example() {
                 onRequestClose={closeModal}
                 style={customStyles}
                 contentLabel="Example Modal"
+                shouldCloseOnOverlayClick={false}
               >
                 <h2
                   ref={(_subtitle) => (subtitle = _subtitle)}
@@ -91,16 +98,25 @@ export default function Example() {
                   .
                 </h2>
                 <button onClick={closeModal}>close</button>
-                <div>I am a modal</div>
-                <form>
-                  <input />
-                  <button
+                <div></div>
+                <form onSubmit={handleSignIn}>
+                  <input
                     className="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-white dark:border-gray-600dark:hover:bg-gray-700"
-                    onClick={handleAcceptTerms}
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    />
+                  <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required className="text-black" />
+                  <button
+                    type="submit"
+                    className="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-white dark:border-gray-600dark:hover:bg-gray-700"
+                    style={{ marginTop: '10px', backgroundColor: 'black', color: 'white' }}
                   >
-                    Accept Terms
+                    Sign In
                   </button>
                 </form>
+                {signInError && <p style={{ color: 'red' }}>{signInError}</p>}
               </Modal>
             </div>
             <img
@@ -108,7 +124,6 @@ export default function Example() {
               alt="Search & Rescue Drone"
               width="700"
               height="500"
-
             ></img>
             <div class="bg-white overflow-hidden rounded-lg" style={{
               position: 'relative',

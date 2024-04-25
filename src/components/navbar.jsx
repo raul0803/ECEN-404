@@ -10,7 +10,6 @@ const user = {
 }
 const navigation = [
   { name: 'Home', href: '/', current: true },
-  { name: 'Stats', href: '/table', current: false },
   { name: 'Drone Maintanance', href: '/drone', current: false },
   { name: 'View', href: '/view', current: false },
 ]

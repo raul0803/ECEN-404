@@ -1,10 +1,11 @@
 import React, { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
 import ROSLIB from 'roslib';
+import { firestore } from './firebase.jsx';
 
 
- // Function to convert array buffer to base64-encoded string
- const arrayBufferToBase64 = (buffer) => {
+// Function to convert array buffer to base64-encoded string
+const arrayBufferToBase64 = (buffer) => {
   let binary = '';
   const bytes = new Uint8Array(buffer);
   for (let i = 0; i < bytes.byteLength; i++) {
@@ -55,24 +56,27 @@ function View() {
           ctx.putImageData(imageDataClamped, 0, 0);
           dataURL = canvas.toDataURL(`image/${format}`);
         }
-        
+
         setRosImage(dataURL);
       });
     }
-    
-  
+
+
     ros.current.on('error', (error) => {
       console.error('WebSocket error:', error);
       //setLidarData([]);
     });
-  
+
 
     return () => {
       listener.current.unsubscribe();
     };
   }, []);
 
-  
+  const openFoxgloveApp = () => {
+    window.open("https://app.foxglove.dev/raul-cruz/view?layoutId=bd469e85-13e1-49e9-ab02-56a483884c9c", "_blank");
+  };
+
   useEffect(() => {
     if (Array.isArray(lidarData) && lidarData.length > 0) {
       const lidarPointCloud = new THREE.Points(
@@ -112,15 +116,15 @@ function View() {
     }
   };
   const displayRosMessage = () => {
-   setDisplayMessage(true);
-    };
-  
+    setDisplayMessage(true);
+  };
+
   return (
     <div className="App">
       <div className="Camera">
         <canvas ref={photoRef}></canvas>
         <div style={{ position: "relative" }}>
-          {rosImage && <img src={rosImage} alt="RosImage"/>}
+          {rosImage && <img src={rosImage} alt="RosImage" />}
           <video ref={videoRef} autoPlay playsInline></video>
         </div>
         <button
@@ -128,25 +132,37 @@ function View() {
           onClick={displayRosMessage}
           style={{ marginBottom: "10px" }}
         >
-         Camera
+          Camera
         </button>
         &nbsp;&nbsp;
 
         <button
-        className="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-white focus:outline-none bg-black rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-white dark:border-gray-600dark:hover:bg-gray-700"
+          className="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-white focus:outline-none bg-black rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-white dark:border-gray-600dark:hover:bg-gray-700"
           onClick={takePhoto}
         >
           Snap
         </button>
+        &nbsp;&nbsp;
         <button
-         className="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-white focus:outline-none bg-black rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-white dark:border-gray-600dark:hover:bg-gray-700"
+          className="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-white focus:outline-none bg-black rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-white dark:border-gray-600dark:hover:bg-gray-700"
           onClick={stopVideo}
         >
+
           End
         </button>
-     
+        <button
+          className="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-white focus:outline-none bg-black rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-white dark:border-gray-600dark:hover:bg-gray-700"
+          onClick={openFoxgloveApp} // Bind Foxglove link function to button click event
+        >
+          Foxglove
+        </button>
+        <button
+          className="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-white focus:outline-none bg-black rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus"
+        >
           LiDar
-        
+        </button>
+
+
         {displayMessage && rosMessage && (
           <div>
             <h3 className='text-3xl font-bold tracking-tight text-gray-900'>ROS Message: </h3>
