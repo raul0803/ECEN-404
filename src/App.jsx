@@ -176,7 +176,7 @@ function App() {
         <div>
           <button onClick={() => setCurrentPage('table')}>Stats</button> &nbsp;
           <button onClick={() => setCurrentPage('drone')}>Drone Maintance</button>
-          <button onClick={() => setCurrentPage('drone')}>Drone Maintance</button>
+          <button onClick={() => setCurrentPage('view')}>Drone Maintance</button>
           {currentPage === 'drone' && <Drone />}
           {currentPage === 'view' && <View />}
           {currentPage === 'user' && <User />}
