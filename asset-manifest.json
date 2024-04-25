@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/ECEN-404/static/css/main.c0cb35e6.css",
+    "main.js": "/ECEN-404/static/js/main.13bb4d65.js",
+    "index.html": "/ECEN-404/index.html",
+    "main.c0cb35e6.css.map": "/ECEN-404/static/css/main.c0cb35e6.css.map",
+    "main.13bb4d65.js.map": "/ECEN-404/static/js/main.13bb4d65.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.c0cb35e6.css",
+    "static/js/main.13bb4d65.js"
+  ]
+}
