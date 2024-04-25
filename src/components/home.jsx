@@ -119,12 +119,7 @@ export default function Example() {
                 {signInError && <p style={{ color: 'red' }}>{signInError}</p>}
               </Modal>
             </div>
-            <img
-              src="drone.jpeg"
-              alt="Search & Rescue Drone"
-              width="700"
-              height="500"
-            ></img>
+            <img src="/drone.jpeg" alt="Search & Rescue Drone" width="700" height="500" />.
             <div class="bg-white overflow-hidden rounded-lg" style={{
               position: 'relative',
               top: '100px',

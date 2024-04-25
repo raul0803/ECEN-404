@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 const user = {
   name: 'Tom Cook',
   email: 'tom@example.com',
-  imageUrl: 'raul.png',
+  imageUrl: '/raul.png',
 }
 const navigation = [
   { name: 'Home', href: '/', current: true },
